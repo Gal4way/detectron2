@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# Copyright (c) Facebook, Inc. and its affiliates.
-
 import argparse
 import glob
 import logging
@@ -8,6 +5,8 @@ import os
 import sys
 from typing import Any, ClassVar, Dict, List
 import torch
+import numpy as np
+from scipy import ndimage
 
 from detectron2.config import CfgNode, get_cfg
 from detectron2.data.detection_utils import read_image
@@ -100,9 +99,11 @@ class InferenceAction(Action):
         context = cls.create_context(args, cfg)
         for file_name in file_list:
             img = read_image(file_name, format="BGR")  # predictor expects BGR image.
+            resized_img = ndimage.zoom(img, (args.desired_weight/img.shape[0], args.desired_height/img.shape[1], 1))
+            bg = np.zeros_like(resized_img)
             with torch.no_grad():
-                outputs = predictor(img)["instances"]
-                cls.execute_on_outputs(context, {"file_name": file_name, "image": img}, outputs)
+                outputs = predictor(resized_img)["instances"]
+                cls.execute_on_outputs(context, {"file_name": file_name, "image": bg}, outputs)
         cls.postexecute(context)
 
     @classmethod
@@ -255,6 +256,22 @@ class ShowAction(InferenceAction):
             help="File name to save output to",
         )
 
+        parser.add_argument(
+            "--desired_weight",
+            metavar="<background_image>",
+            type=int,
+            default=512,
+            help="desired_weight",
+        )
+
+        parser.add_argument(
+            "--desired_height",
+            metavar="<background_image>",
+            type=int,
+            default=512,
+            help="desired_height",
+        )
+
     @classmethod
     def setup_config(
         cls: type, config_fpath: str, model_fpath: str, args: argparse.Namespace, opts: List[str]
@@ -285,6 +302,9 @@ class ShowAction(InferenceAction):
         entry_idx = context["entry_idx"] + 1
         out_fname = cls._get_out_fname(entry_idx, context["out_fname"])
         out_dir = os.path.dirname(out_fname)
+
+        out_fname = os.path.join(out_dir, os.path.basename(image_fpath))
+
         if len(out_dir) > 0 and not os.path.exists(out_dir):
             os.makedirs(out_dir)
         cv2.imwrite(out_fname, image_vis)
@@ -342,7 +362,7 @@ def create_argument_parser() -> argparse.ArgumentParser:
 def main():
     parser = create_argument_parser()
     args = parser.parse_args()
-    verbosity = getattr(args, "verbosity", None)
+    verbosity = args.verbosity if hasattr(args, "verbosity") else None
     global logger
     logger = setup_logger(name=LOGGER_NAME)
     logger.setLevel(verbosity_to_level(verbosity))
