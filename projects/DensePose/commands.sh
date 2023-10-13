@@ -20,6 +20,22 @@ https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_s1x/165712039/m
 
 
 # model: R_101_FPN_DL_s1x
-python apply_net.py show configs/densepose_rcnn_R_101_FPN_DL_s1x.yaml  \
+CUDA_VISIBLE_DEVICES=4 python apply_net.py show configs/densepose_rcnn_R_101_FPN_DL_s1x.yaml  \
 https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_DL_s1x/165712116/model_final_844d15.pkl \
-/local/yangxu/pytorch/SurrealX/stablediffusion_main/avatar_images/avatar_img/20230822-173021.png dp_segm -v --desired_weight 2160 --desired_height 2160 --output /local/yangxu/pytorch/SurrealX/stablediffusion_main/avatar_images/avatar_densepose/output.png
+/home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DeepFashion/after_split_512_384/test/image dp_segm -v --desired_weight 512 --desired_height 384 --output /home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DeepFashion/after_split_512_384/test/densepose/output.png
+
+CUDA_VISIBLE_DEVICES=5 python apply_net.py show configs/densepose_rcnn_R_101_FPN_DL_s1x.yaml  \
+https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_DL_s1x/165712116/model_final_844d15.pkl \
+/home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DeepFashion/after_split_512_384/train/image dp_segm -v --desired_weight 512 --desired_height 384 --output /home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DeepFashion/after_split_512_384/train/densepose/output.png
+
+CUDA_VISIBLE_DEVICES=4 python apply_net.py show configs/densepose_rcnn_R_101_FPN_DL_s1x.yaml  \
+https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_DL_s1x/165712116/model_final_844d15.pkl \
+/home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DressCode/512_384_prior_regenerated/dresses/images dp_segm -v --desired_weight 512 --desired_height 384 --output /home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DressCode/512_384_prior_regenerated/dresses/densepose/output.png
+
+CUDA_VISIBLE_DEVICES=5 python apply_net.py show configs/densepose_rcnn_R_101_FPN_DL_s1x.yaml  \
+https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_DL_s1x/165712116/model_final_844d15.pkl \
+/home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DressCode/512_384_prior_regenerated/lower_body/images dp_segm -v --desired_weight 512 --desired_height 384 --output /home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DressCode/512_384_prior_regenerated/lower_body/densepose/output.png
+
+CUDA_VISIBLE_DEVICES=6 python apply_net.py show configs/densepose_rcnn_R_101_FPN_DL_s1x.yaml  \
+https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_DL_s1x/165712116/model_final_844d15.pkl \
+/home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DressCode/512_384_prior_regenerated/upper_body/images dp_segm -v --desired_weight 512 --desired_height 384 --output /home/ubuntu/YX/code/virtual_tryon/StableTryOn/datasets/DressCode/512_384_prior_regenerated/upper_body/densepose/output.png
